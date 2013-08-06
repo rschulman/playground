@@ -8,6 +8,8 @@
 #if defined(__linux__)
 #error "You are not using a cross-compiler, you will most certainly run into trouble"
 #endif
+
+#define TO_HEX(i) (i <= 9 ? '0' + i : 'A' - 10 + i)
  
 /* Hardware text mode color constants. */
 enum vga_color
@@ -130,11 +132,61 @@ void terminal_putchar(char c)
 	}
 }
  
-void terminal_writestring(const char* data)
+void print(const char* data)
 {
 	size_t datalen = strlen(data);
 	for ( size_t i = 0; i < datalen; i++ )
 		terminal_putchar(data[i]);
+}
+
+void fprint(const char* string, uint8_t number) 
+{
+	size_t datalen = strlen(string);
+	uint8_t working = number;
+	uint8_t outcome[10];
+	size_t numbersize = 0;
+	for ( size_t index = 0; index < datalen; index++ )
+	{
+		if ( string[index] == '%' )
+		{
+			switch ( string[index + 1] )
+			{
+				case '%':
+					terminal_putchar('%');
+					index++; // Increment it twice to get it past the second '%'
+					break;
+				case 'd':
+
+					while ( working != 0 )
+					{
+						outcome[numbersize] = working % 10;
+						numbersize++;
+						working /= 10;
+					}
+					numbersize--;
+					for (; numbersize > 0; numbersize-- )
+					{
+						terminal_putchar('0' + outcome[numbersize]);
+					}
+					terminal_putchar('0' + outcome[0]); // Just to get the last char out of the array.
+
+					index++; // Increment it again to get it past the 'n'
+					break;
+				case 'h':
+					terminal_putchar('0');
+					terminal_putchar('x');
+					terminal_putchar(TO_HEX(((number & 0x00F0) >> 4)));
+					terminal_putchar(TO_HEX(((number & 0x000F))));
+					index++;
+					break;
+
+			}
+		}
+		else
+		{
+			terminal_putchar(string[index]);
+		}
+	}
 }
  
 #if defined(__cplusplus)
@@ -143,6 +195,7 @@ extern "C" /* Use C linkage for kernel_main. */
 void kernel_main()
 {
 	terminal_initialize();
-	terminal_writestring("Hello, kernel World!\n");
-	terminal_writestring("Newlines!\n");
+	print("Hello, kernel World!\n");
+	print("Newlines!\n");
+	fprint("Printing %h numbers.", 10);
 }
