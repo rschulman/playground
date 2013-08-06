@@ -90,7 +90,24 @@ void terminal_putchar(char c)
 	if (c == '\n')
 	{
 		terminal_column = 0;
-		terminal_row++;
+		if ( ++terminal_row == VGA_HEIGHT )
+		{
+			for ( size_t y = 0; y < VGA_HEIGHT - 1; y++ ) /* First slide up every row. */
+			{
+				for ( size_t x = 0; x < VGA_WIDTH; x++ )
+				{
+					const size_t index = y * VGA_WIDTH + x;
+					const size_t new_index = index + VGA_WIDTH;
+					terminal_buffer[index] = terminal_buffer[new_index];
+				}
+			}
+			terminal_row = VGA_HEIGHT - 1;
+			for ( size_t x = 0; x < VGA_WIDTH; x++ ) /* Then blank out what used to be on the bottom row. */
+			{
+				const size_t index = ( VGA_HEIGHT - 1 ) * VGA_WIDTH + x;
+				terminal_buffer[index] = make_vgaentry(' ', terminal_color);
+			}
+		}
 		return;
 	}
 	terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
@@ -99,7 +116,16 @@ void terminal_putchar(char c)
 		terminal_column = 0;
 		if ( ++terminal_row == VGA_HEIGHT )
 		{
-			terminal_row = 0;
+			for ( size_t y = 0; y < VGA_HEIGHT - 1; y++ )
+			{
+				for ( size_t x = 0; x < VGA_WIDTH; x++ )
+				{
+					const size_t index = y * VGA_WIDTH + x;
+					const size_t new_index = index + VGA_WIDTH;
+					terminal_buffer[index] = terminal_buffer[new_index];
+				}
+			}
+			terminal_row = VGA_HEIGHT - 1;
 		}
 	}
 }
@@ -120,5 +146,33 @@ void kernel_main()
 	/* Since there is no support for newlines in terminal_putchar yet, \n will
 	   produce some VGA specific character instead. This is normal. */
 	terminal_writestring("Hello, kernel World!\n");
-	terminal_writestring("Newlines!");
+	terminal_writestring("Newlines!\n");
+	terminal_writestring("Number 1\n");
+	terminal_writestring("Number 2\n");
+	terminal_writestring("Number 3\n");
+	terminal_writestring("Number 4\n");
+	terminal_writestring("Number 5\n");
+	terminal_writestring("Number 6\n");
+	terminal_writestring("Number 7\n");
+	terminal_writestring("Number 8\n");
+	terminal_writestring("Number 9\n");
+	terminal_writestring("Number 10\n");
+	terminal_writestring("Number 11\n");
+	terminal_writestring("Number 12\n");
+	terminal_writestring("Number 13\n");
+	terminal_writestring("Number 14\n");
+	terminal_writestring("Number 15\n");
+	terminal_writestring("Number 16\n");
+	terminal_writestring("Number 17\n");
+	terminal_writestring("Number 18\n");
+	terminal_writestring("Number 19\n");
+	terminal_writestring("Number 20\n");
+	terminal_writestring("Number 21\n");
+	terminal_writestring("Number 22\n");
+	terminal_writestring("Number 23\n");
+	terminal_writestring("Number 24\n");
+	terminal_writestring("Number 25\n");
+	terminal_writestring("Number 26\n");
+	terminal_writestring("Number 27\n");
+	terminal_writestring("Number 28\n");
 }
