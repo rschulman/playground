@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "stdio.h"
+#include "gdt.h"
  
 /* Check if the compiler thinks if we are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -14,10 +15,14 @@
 extern "C" /* Use C linkage for kernel_main. */
 #endif
 
+extern void install_gdt();
+
 void kernel_main()
 {
 	terminal_initialize();
 	print("Hello, kernel World!\n");
-	print("Newlines!\n");
+	print("Initializing GDT...");
+	install_gdt();
+	print(" Done!\n");
 	fprint("Printing %h numbers.", 10);
 }
