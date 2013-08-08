@@ -30,6 +30,6 @@ void terminal_setcolor(uint8_t color);
 void terminal_putentryat(char c, uint8_t color, size_t x, size_t y);
 void terminal_putchar(char c);
 void print(const char* data);
-void fprint(const char* string, uint8_t number);
+void fprint(const char* string, uint32_t number);
 
 #endif

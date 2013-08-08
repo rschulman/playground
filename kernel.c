@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "stdio.h"
+#include "idt.h"
  
 /* Check if the compiler thinks if we are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -23,4 +24,9 @@ void kernel_main()
 	print("Initializing GDT...");
 	install_gdt();
 	print(" Done!\n");
+	print("Initializing interrupts...");
+	install_idts();
+	print(" Done!\n");
+	uint32_t test = 500/0;
+	fprint("Divide by zero: %d\n", test);
 }

@@ -114,7 +114,7 @@ void print(const char* data)
 		terminal_putchar(data[i]);
 }
 
-void fprint(const char* string, uint8_t number) 
+void fprint(const char* string, uint32_t number) 
 {
 	size_t datalen = strlen(string);
 	uint8_t working = number;
@@ -150,8 +150,14 @@ void fprint(const char* string, uint8_t number)
 				case 'h':
 					terminal_putchar('0');
 					terminal_putchar('x');
-					terminal_putchar(TO_HEX(((number & 0x00F0) >> 4)));
-					terminal_putchar(TO_HEX(((number & 0x000F))));
+					terminal_putchar(TO_HEX(((number & 0xF0000000) >> 28)));
+					terminal_putchar(TO_HEX(((number & 0x0F000000) >> 24)));
+					terminal_putchar(TO_HEX(((number & 0x00F00000) >> 20)));
+					terminal_putchar(TO_HEX(((number & 0x000F0000) >> 16)));
+					terminal_putchar(TO_HEX(((number & 0x0000F000) >> 12)));
+					terminal_putchar(TO_HEX(((number & 0x00000F00) >> 8)));
+					terminal_putchar(TO_HEX(((number & 0x000000F0) >> 4)));
+					terminal_putchar(TO_HEX(((number & 0x0000000F))));
 					index++;
 					break;
 
