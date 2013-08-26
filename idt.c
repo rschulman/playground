@@ -6,7 +6,7 @@
 #include "stdio.h"
 
 struct IDTDescriber {
-	uint16_t offset_low;		// bits 0 - 15
+	uint16_t offset_low;	/	/ bits 0 - 15
 	uint16_t selector;		// Code segment in either GDT or LDT (GDT for now)
 	uint8_t  zero;			// Just because we need some zeroes
 	uint8_t  type_attr;		// Type bits
