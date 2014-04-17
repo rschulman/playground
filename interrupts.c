@@ -1,3 +1,4 @@
+#include "stdio.h"
 #include "interrupts.h"
 
 idt_entry_t idt_entries[256];
@@ -56,3 +57,7 @@ static void idt_set_gate(uint8_t num, uint32_t base, uint16_t selector, uint8_t 
 	idt_entries[num].zero = 0;
 }
 
+void interrupt_handler(registers_t registers)
+{
+	fprint("Interrupt received: %d\n", registers.int_no);
+}
