@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "stdio.h"
+#include "interrupts.h"
  
 /* Check if the compiler thinks if we are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -26,7 +27,7 @@ typedef struct GDT {
  * target: pointer to the 8-byte GDT entry
  * source: structure representing the GDT entry
 */
-void encodeGdtEntry(uint8_t *target, uint16_t limit, uint32_t base, uint8_t type) 
+static void encodeGdtEntry(uint8_t *target, uint16_t limit, uint32_t base, uint8_t type) 
 {
 	// check to see if limit can be encoded
 	if ((limit > 65536) && (limit & 0xFFF) != 0xFFF) {
@@ -64,4 +65,9 @@ void kernel_main()
 	encodeGdtEntry(&gdt_entries[2], 0xFFFF, 0, 0x92);
 	install_gdt(gdt_entries, sizeof(gdt_entries));
 	print(" Done!\n");
+	print("Initializing Interrupts...");
+	init_idt();
+	print("Done!\n");
+	asm volatile ("int $0x3");
+	asm volatile ("int $0x4"); 
 }

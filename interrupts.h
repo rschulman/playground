@@ -1,28 +1,27 @@
-struct registers
+typedef struct registers
 {
 	uint32_t ds;
 	uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
 	uint32_t int_no, err_code;
 	uint32_t eip, cs, eflags, useresp, ss;
-}
-typedef registers registers_t;
+} registers_t;
 
-struct idt_entry
+typedef struct idt_entry
 {
 	uint16_t lower_base;
 	uint16_t selector;
 	uint8_t zero;
 	uint8_t flags;
 	uint16_t upper_base;
-} __attribute__((packed));
-typedef idt_entry idt_entry_t;
+} __attribute__((packed)) idt_entry_t;
 
-struct idt_pointer_struct
+typedef struct idt_pointer_struct
 {
 	uint16_t limit;
 	uint32_t base;
-} __attribute__((packed));
-typedef idt_pointer_struct idt_pointer_t;
+} __attribute__((packed)) idt_pointer_t;
+
+void init_idt();
 
 extern void isr0 ();
 extern void isr1 ();

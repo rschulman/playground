@@ -27,6 +27,18 @@ size_t strlen(const char* str)
 	return ret;
 }
  
+void* memset(void* s, uint8_t c, uint16_t n)
+{
+	uint16_t iter;
+	uint8_t *reference = (uint8_t *)s;
+
+	for (iter = 0; iter < n; iter++)
+	{
+		reference[iter] = c;
+	}
+	return s;
+}
+
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 24;
  
