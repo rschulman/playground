@@ -1,10 +1,10 @@
 CC=i686-elf-gcc
 AS=nasm
-CFLAGS=-std=gnu99 -ffreestanding -O2 -Wall -Wextra -c
+CFLAGS=-std=gnu99 -ffreestanding -O2 -Wall -Wextra -c -g
 ASFLAGS=-f elf
 LDFLAGS=-ffreestanding -nostdlib -lgcc
-SOURCES=kernel.c stdio.c interrupts.c boot.s set_gdt.s interrupt_handlers.s
-OBJECTS=kernel.o stdio.o interrupts.o boot.o set_gdt.o interrupt_handlers.o
+SOURCES=kernel.c stdio.c descriptors.c interrupts.c boot.s set_gdt.s interrupt_handlers.s
+OBJECTS=kernel.o stdio.o descriptors.o interrupts.o boot.o set_gdt.o interrupt_handlers.o
 EXECUTABLE=playground.bin
 
 all: $(SOURCES) $(EXECUTABLE)

@@ -1,15 +1,19 @@
 global install_gdt
 global idt_flush
 
-gdtr DW 0
-     DD 0
-
 install_gdt:
+     CLI
      MOV EAX, [esp + 4]
-     MOV [gdtr + 2], EAX
-     MOV AX, [esp + 8]
-     MOV [gdtr], AX
-     LGDT [gdtr]
+     LGDT [EAX]
+     MOV AX, 0x10
+     MOV DS, AX
+     MOV ES, AX
+     MOV FS, AX
+     MOV GS, AX
+     MOV SS, AX
+     JMP 0x08:.reload_CS
+
+.reload_CS:
      RET
 
 idt_flush:
