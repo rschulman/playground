@@ -3,6 +3,13 @@
 #include <stdbool.h>
 #include "stdio.h"
 #include "interrupts.h"
+#include "util.h"
+
+#define		MPIC_IO		0x20
+#define		SPIC_IO		0xA0
+#define		MPIC_DATA	0x21
+#define		SPIC_DATA	0xA1
+#define		PIC_EOI		0x20
 
 idt_entry_t idt_entries[256];
 idt_pointer_t idt_location;
@@ -22,7 +29,9 @@ void init_idt()
 	idt_location.limit = sizeof(idt_entry_t) * 256 - 1;
 	idt_location.base = (uint32_t)&idt_entries;
 
-	memset(&idt_entries, 0, sizeof(idt_entry_t) * 256);
+	memset(&idt_entries, 0, sizeof(idt_entry_t) * 256); // Zero out the IDT tables
+
+	// First assign the CPU-based interrupt routines.
 
 	idt_set_gate( 0, (uint32_t)isr0 , 0x08, 0x8E);
 	idt_set_gate( 1, (uint32_t)isr1 , 0x08, 0x8E);
@@ -57,6 +66,25 @@ void init_idt()
 	idt_set_gate( 30, (uint32_t)isr30 , 0x08, 0x8E);
 	idt_set_gate( 31, (uint32_t)isr31 , 0x08, 0x8E);
 
+	// Then reprogram the hardware interrupt controller
+
+	outb(MPIC_IO, 0x11);	// Tell both PICs to initialize.
+	io_wait();
+	outb(SPIC_IO, 0x11);
+	io_wait();
+	outb(MPIC_DATA, 0x20);	// Master PIC offset set to 32nd interrupt
+	io_wait();
+	outb(SPIC_DATA, 0x28);	// Slave PIC offset set to 40th interrupt
+	io_wait();
+	outb(MPIC_DATA, 0x04);	// Tell master PIC about slave on IRQ 2
+	io_wait();
+	outb(SPIC_DATA, 0x02);
+	io_wait();
+	outb(MPIC_DATA, 0x01);	// Tell master PIC about slave on IRQ 2
+	io_wait();
+	outb(SPIC_DATA, 0x01);
+	io_wait();
+	
 	idt_flush((uint32_t)&idt_location);
 }
 
